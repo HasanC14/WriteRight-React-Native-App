@@ -20,12 +20,11 @@ const App = () => {
         setInitializing(false);
       }
     });
-
-    return subscriber; // Clean up the subscription
+    return subscriber;
   }, []);
 
   if (initializing) {
-    return null; // Render loading state if still initializing
+    return null;
   }
 
   return (

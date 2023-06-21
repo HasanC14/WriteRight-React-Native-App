@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   View,
-  Text,
   TextInput,
   Button,
   StyleSheet,
@@ -23,23 +22,19 @@ const Register = () => {
       ToastAndroid.show("Passwords do not match", ToastAndroid.SHORT);
       return;
     }
-
-    setLoading(true); // Set loading state to true
+    setLoading(true);
 
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
         const user = userCredential.user;
-        // Additional logic, if needed
-
-        // Save user information to the database
         saveUserToDatabase(user);
       })
       .catch((error) => {
         console.error("Registration failed:", error);
         ToastAndroid.show("Registration failed", ToastAndroid.SHORT);
-        setLoading(false); // Set loading state to false after registration failure
+        setLoading(false);
       });
   };
 
@@ -53,13 +48,12 @@ const Register = () => {
       })
       .then(() => {
         ToastAndroid.show("Registration successful", ToastAndroid.SHORT);
-        setLoading(false); // Set loading state to false after successful registration
-        // Additional logic, if needed
+        setLoading(false);
       })
       .catch((error) => {
         console.error("Saving user failed:", error);
         ToastAndroid.show("Registration failed", ToastAndroid.SHORT);
-        setLoading(false); // Set loading state to false after saving user failure
+        setLoading(false);
       });
   };
 
@@ -104,7 +98,7 @@ const Register = () => {
             <Button
               title="Register"
               onPress={handleRegister}
-              disabled={loading} // Disable the button while loading is true
+              disabled={loading}
             />
           </View>
         </>

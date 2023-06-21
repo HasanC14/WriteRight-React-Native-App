@@ -17,17 +17,17 @@ const Login = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
 
   const handleLogin = () => {
-    setLoading(true); // Set loading state to true
+    setLoading(true);
 
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => {
-        setLoading(false); // Set loading state to false after successful login
+        setLoading(false);
       })
       .catch((error) => {
         setError(error.message);
-        setLoading(false); // Set loading state to false after login failure
+        setLoading(false);
       });
   };
 
@@ -60,11 +60,7 @@ const Login = ({ navigation }) => {
             secureTextEntry
           />
           <View style={styles.buttonContainer}>
-            <Button
-              title="Login"
-              onPress={handleLogin}
-              disabled={loading} // Disable the button while loading is true
-            />
+            <Button title="Login" onPress={handleLogin} disabled={loading} />
           </View>
           {error && <Text style={styles.error}>{error}</Text>}
           <View style={styles.registerContainer}>

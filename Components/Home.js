@@ -25,7 +25,6 @@ const Home = () => {
   const currentUser = firebase.auth().currentUser;
   useEffect(() => {
     if (currentUser) {
-      // Fetch the user's information from Firestore
       const userRef = firestore.collection("users").doc(currentUser.uid);
       userRef
         .get()
@@ -47,12 +46,9 @@ const Home = () => {
     firebase
       .auth()
       .signOut()
-      .then(() => {
-        // Logout successful
-      })
+
       .catch((error) => {
         console.error("Logout failed:", error);
-        // Handle error
       });
   };
 
@@ -85,7 +81,6 @@ const Home = () => {
       console.error("API request failed:", error);
       setApiResponse("");
       ToastAndroid.show("API request failed", ToastAndroid.SHORT);
-      // Handle error
     } finally {
       setIsLoading(false);
       setIsModalVisible(true);
