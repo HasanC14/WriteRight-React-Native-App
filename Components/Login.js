@@ -37,8 +37,9 @@ const Login = ({ navigation }) => {
       />
       <Button title="Login" onPress={handleLogin} />
       {error && <Text style={styles.error}>{error}</Text>}
+      <Text>Don't have an account?</Text>
       <Text style={styles.registerLink} onPress={navigateToRegister}>
-        Don't have an account? Register here.
+        Register here.
       </Text>
     </View>
   );
