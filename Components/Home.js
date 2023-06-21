@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import Modal from "react-native-modal";
 import Icon from "react-native-vector-icons/Feather";
-import { firebase } from "../config";
+import { firebase, firestore } from "../config";
 
 const Home = () => {
   const [inputValue, setInputValue] = useState("");
@@ -23,11 +23,23 @@ const Home = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [username, setUsername] = useState("");
   const currentUser = firebase.auth().currentUser;
-
   useEffect(() => {
     if (currentUser) {
-      console.log(currentUser);
-      setUsername(currentUser.displayName);
+      // Fetch the user's information from Firestore
+      const userRef = firestore.collection("users").doc(currentUser.uid);
+      userRef
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            const userData = doc.data();
+            setUsername(userData.username);
+          } else {
+            console.log("User does not exist in Firestore");
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching user from Firestore:", error);
+        });
     }
   }, [currentUser]);
 
@@ -91,9 +103,8 @@ const Home = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <Image source={require("../assets/logo.png")} style={styles.logo} />
-        <Text style={styles.username}>{username}</Text>
+      <View style={styles.header}>
+        <Text style={styles.username}>Welcome, {username}</Text>
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
@@ -110,28 +121,31 @@ const Home = () => {
         <Text style={styles.characterCount}>
           Character count: {inputValue.length}/1000
         </Text>
-        <View style={styles.buttonContainer}>
+        <View style={[styles.buttonContainer, { marginBottom: 10 }]}>
           <Button
             title="Rewrite"
             onPress={() => handleAPI("rewrite", "Rewrite")}
             style={styles.button}
           />
         </View>
-        <View style={styles.buttonContainer}>
+
+        <View style={[styles.buttonContainer, { marginBottom: 10 }]}>
           <Button
             title="Grammar Check"
             onPress={() => handleAPI("grammar", "Grammar Check")}
             style={styles.button}
           />
         </View>
-        <View style={styles.buttonContainer}>
+
+        <View style={[styles.buttonContainer, { marginBottom: 10 }]}>
           <Button
             title="Summarize"
             onPress={() => handleAPI("summarize", "Summarize")}
             style={styles.button}
           />
         </View>
-        <View style={styles.buttonContainer}>
+
+        <View style={[styles.buttonContainer, { marginBottom: 10 }]}>
           <Button
             title="Formal Tone"
             onPress={() => handleAPI("formal", "Formal Tone")}
@@ -174,34 +188,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#E6F2FF",
-    justifyContent: "center",
-    alignItems: "center",
   },
-  logoContainer: {
-    marginTop: 20,
-    marginBottom: 20,
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-  },
-  logo: {
-    width: 150,
-    height: 100,
-    resizeMode: "contain",
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
   username: {
     fontSize: 20,
     fontWeight: "bold",
-    marginTop: 10,
   },
-  logoutButton: {
-    marginTop: 10,
-  },
+  logoutButton: {},
   logoutButtonText: {
     color: "#2F80ED",
     fontSize: 16,
   },
   content: {
-    width: "95%",
-    paddingHorizontal: 10,
+    flex: 1,
+    padding: 20,
   },
   input: {
     borderWidth: 1,
@@ -215,11 +221,8 @@ const styles = StyleSheet.create({
   characterCount: {
     marginBottom: 10,
   },
-  buttonContainer: {
-    marginBottom: 10,
-  },
   button: {
-    marginHorizontal: 5,
+    marginVertical: 5,
     fontSize: 16,
   },
   modalContainer: {

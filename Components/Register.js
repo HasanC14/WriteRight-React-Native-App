@@ -7,7 +7,9 @@ import {
   StyleSheet,
   ToastAndroid,
 } from "react-native";
-import { firebase } from "../config";
+import { firebase, firestore } from "../config";
+
+import "firebase/auth";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -39,9 +41,9 @@ const Register = () => {
   };
 
   const saveUserToDatabase = (user) => {
-    firebase
-      .database()
-      .ref("users/" + user.uid)
+    firestore
+      .collection("users")
+      .doc(user.uid)
       .set({
         email: user.email,
         username: username,

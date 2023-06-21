@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, TextInput, Button, StyleSheet, Text } from "react-native";
+import { View, TextInput, Button, StyleSheet, Text, Image } from "react-native";
 import { firebase } from "../config";
 
 const Login = ({ navigation }) => {
@@ -22,6 +22,11 @@ const Login = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Image
+        source={require("../assets/login.jpg")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -51,6 +56,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
+  },
+  logo: {
+    width: 200,
+    height: 200,
+    marginBottom: 24,
   },
   input: {
     width: "100%",

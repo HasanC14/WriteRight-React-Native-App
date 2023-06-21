@@ -5,7 +5,7 @@ import { firebase } from "./config";
 import Login from "./Components/Login";
 import Register from "./Components/Register";
 import Home from "./Components/Home";
-
+import { Image } from "react-native";
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -47,7 +47,15 @@ const App = () => {
           <Stack.Screen
             name="Home"
             component={Home}
-            options={{ headerTitle: "WriteRight" }}
+            options={{
+              headerTitle: () => (
+                <Image
+                  source={require("./assets/logo.png")}
+                  style={{ width: 150, height: 30 }}
+                  resizeMode="contain"
+                />
+              ),
+            }}
           />
         )}
       </Stack.Navigator>
