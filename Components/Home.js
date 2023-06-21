@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import Modal from "react-native-modal";
 import Icon from "react-native-vector-icons/Feather";
+import { firebase } from "../config";
 
 const Home = () => {
   const [inputValue, setInputValue] = useState("");
@@ -20,6 +21,28 @@ const Home = () => {
   const [service, setService] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [username, setUsername] = useState("");
+  const currentUser = firebase.auth().currentUser;
+
+  useEffect(() => {
+    if (currentUser) {
+      console.log(currentUser);
+      setUsername(currentUser.displayName);
+    }
+  }, [currentUser]);
+
+  const handleLogout = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        // Logout successful
+      })
+      .catch((error) => {
+        console.error("Logout failed:", error);
+        // Handle error
+      });
+  };
 
   const handleInputChange = (text) => {
     if (text.length <= 1000) {
@@ -69,7 +92,11 @@ const Home = () => {
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
-        <Image source={require("./assets/logo.png")} style={styles.logo} />
+        <Image source={require("../assets/logo.png")} style={styles.logo} />
+        <Text style={styles.username}>{username}</Text>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutButtonText}>Logout</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.content}>
         <TextInput
@@ -153,11 +180,24 @@ const styles = StyleSheet.create({
   logoContainer: {
     marginTop: 20,
     marginBottom: 20,
+    alignItems: "center",
   },
   logo: {
     width: 150,
     height: 100,
     resizeMode: "contain",
+  },
+  username: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 10,
+  },
+  logoutButton: {
+    marginTop: 10,
+  },
+  logoutButtonText: {
+    color: "#2F80ED",
+    fontSize: 16,
   },
   content: {
     width: "95%",

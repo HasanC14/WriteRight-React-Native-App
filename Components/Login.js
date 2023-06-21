@@ -1,12 +1,73 @@
-import { View, Text } from "react-native";
-import React from "react";
+import React, { useState } from "react";
+import { View, TextInput, Button, StyleSheet, Text } from "react-native";
+import { firebase } from "../config";
 
-const Login = () => {
+const Login = ({ navigation }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+
+  const handleLogin = () => {
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .catch((error) => {
+        setError(error.message);
+      });
+  };
+
+  const navigateToRegister = () => {
+    navigation.navigate("Register");
+  };
+
   return (
-    <View>
-      <Text>Login</Text>
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        value={email}
+        onChangeText={(text) => setEmail(text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        value={password}
+        onChangeText={(text) => setPassword(text)}
+        secureTextEntry
+      />
+      <Button title="Login" onPress={handleLogin} />
+      {error && <Text style={styles.error}>{error}</Text>}
+      <Text style={styles.registerLink} onPress={navigateToRegister}>
+        Don't have an account? Register here.
+      </Text>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
+  },
+  input: {
+    width: "100%",
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    marginBottom: 12,
+    paddingHorizontal: 10,
+  },
+  error: {
+    color: "red",
+    marginTop: 8,
+  },
+  registerLink: {
+    marginTop: 16,
+    color: "blue",
+    textDecorationLine: "underline",
+  },
+});
 
 export default Login;
