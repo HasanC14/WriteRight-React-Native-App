@@ -5,10 +5,10 @@ import {
   TextInput,
   Button,
   StyleSheet,
-  ToastAndroid,
+  Image,
+  ActivityIndicator,
 } from "react-native";
 import { firebase, firestore } from "../config";
-
 import "firebase/auth";
 
 const Register = () => {
@@ -16,12 +16,15 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleRegister = () => {
     if (password !== confirmPassword) {
       ToastAndroid.show("Passwords do not match", ToastAndroid.SHORT);
       return;
     }
+
+    setLoading(true); // Set loading state to true
 
     firebase
       .auth()
@@ -36,7 +39,7 @@ const Register = () => {
       .catch((error) => {
         console.error("Registration failed:", error);
         ToastAndroid.show("Registration failed", ToastAndroid.SHORT);
-        // Handle error
+        setLoading(false); // Set loading state to false after registration failure
       });
   };
 
@@ -50,45 +53,62 @@ const Register = () => {
       })
       .then(() => {
         ToastAndroid.show("Registration successful", ToastAndroid.SHORT);
+        setLoading(false); // Set loading state to false after successful registration
         // Additional logic, if needed
       })
       .catch((error) => {
         console.error("Saving user failed:", error);
         ToastAndroid.show("Registration failed", ToastAndroid.SHORT);
-        // Handle error
+        setLoading(false); // Set loading state to false after saving user failure
       });
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Register</Text>
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        style={styles.input}
+      <Image
+        source={require("../assets/register.jpg")}
+        style={styles.image}
+        resizeMode="contain"
       />
-      <TextInput
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Confirm Password"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        secureTextEntry
-        style={styles.input}
-      />
-      <Button title="Register" onPress={handleRegister} />
+      {loading ? (
+        <ActivityIndicator size="large" color="blue" />
+      ) : (
+        <>
+          <TextInput
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Username"
+            value={username}
+            onChangeText={setUsername}
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+            style={styles.input}
+          />
+          <View style={{ width: "100%" }}>
+            <Button
+              title="Register"
+              onPress={handleRegister}
+              disabled={loading} // Disable the button while loading is true
+            />
+          </View>
+        </>
+      )}
     </View>
   );
 };
@@ -99,10 +119,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
+    backgroundColor: "#FFFFFF",
   },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
+  image: {
+    width: 200,
+    height: 200,
     marginBottom: 20,
   },
   input: {

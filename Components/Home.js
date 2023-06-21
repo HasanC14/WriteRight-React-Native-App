@@ -187,7 +187,7 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#E6F2FF",
+    backgroundColor: "white",
   },
   header: {
     flexDirection: "row",
@@ -208,6 +208,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 20,
+    marginTop: 30,
   },
   input: {
     borderWidth: 1,
@@ -215,7 +216,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#E6F2FF",
     minHeight: 200,
   },
   characterCount: {

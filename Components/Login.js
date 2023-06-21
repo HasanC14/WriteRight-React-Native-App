@@ -1,18 +1,33 @@
 import React, { useState } from "react";
-import { View, TextInput, Button, StyleSheet, Text, Image } from "react-native";
+import {
+  View,
+  TextInput,
+  Button,
+  StyleSheet,
+  Text,
+  Image,
+  ActivityIndicator,
+} from "react-native";
 import { firebase } from "../config";
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = () => {
+    setLoading(true); // Set loading state to true
+
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
+      .then(() => {
+        setLoading(false); // Set loading state to false after successful login
+      })
       .catch((error) => {
         setError(error.message);
+        setLoading(false); // Set loading state to false after login failure
       });
   };
 
@@ -27,25 +42,39 @@ const Login = ({ navigation }) => {
         style={styles.logo}
         resizeMode="contain"
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={(text) => setEmail(text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={(text) => setPassword(text)}
-        secureTextEntry
-      />
-      <Button title="Login" onPress={handleLogin} />
-      {error && <Text style={styles.error}>{error}</Text>}
-      <Text>Don't have an account?</Text>
-      <Text style={styles.registerLink} onPress={navigateToRegister}>
-        Register here.
-      </Text>
+      {loading ? (
+        <ActivityIndicator size="large" color="blue" />
+      ) : (
+        <>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+            secureTextEntry
+          />
+          <View style={styles.buttonContainer}>
+            <Button
+              title="Login"
+              onPress={handleLogin}
+              disabled={loading} // Disable the button while loading is true
+            />
+          </View>
+          {error && <Text style={styles.error}>{error}</Text>}
+          <View style={styles.registerContainer}>
+            <Text>Don't have an account?</Text>
+            <Text style={styles.registerLink} onPress={navigateToRegister}>
+              Register here.
+            </Text>
+          </View>
+        </>
+      )}
     </View>
   );
 };
@@ -56,6 +85,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
+    backgroundColor: "#FFFFFF",
   },
   logo: {
     width: 200,
@@ -69,15 +99,23 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 12,
     paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  buttonContainer: {
+    width: "100%",
   },
   error: {
     color: "red",
     marginTop: 8,
   },
-  registerLink: {
+  registerContainer: {
+    flexDirection: "row",
     marginTop: 16,
+  },
+  registerLink: {
     color: "blue",
     textDecorationLine: "underline",
+    marginLeft: 4,
   },
 });
 
